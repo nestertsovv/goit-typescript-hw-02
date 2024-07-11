@@ -1,0 +1,44 @@
+.header {
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  background-color: aquamarine;
+  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  position: relative;
+
+  input {
+    width: 300px;
+    padding: 8px;
+    outline: none;
+    border: 1px solid #c3c3c3;
+    border-radius: 6px;
+  }
+
+  button {
+    padding: 6px 12px;
+    border: none;
+    background-color: #5f5fff;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+
+    &:hover {
+      background-color: #3b3bff;
+    }
+  }
+}
+
+.error {
+  position: absolute;
+  left: 0;
+  /* top: 102%; */
+  color: red;
+}
