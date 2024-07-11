@@ -1,35 +1,58 @@
-import { useEffect, useState } from "react";
-import { SearchBar } from "./components/SearchBar/SearchBar";
-import { getPhotos } from "./services/getPhotosApi";
-import { ImageGallery } from "./components/ImageGallery/ImageGallery";
-import { LoadMoreBtn } from "./components/LoadMoreBtn/LoadMoreBtn";
-import { Loader } from "./components/Loader/Loader";
-import "./styles/reset.css";
+import { KeyboardEvent, MouseEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { ErrorMessage } from "./components/ErrorMessage/ErrorMessage";
-import { ImageModal } from "./components/ImageModal/ImageModal";
+
+import {
+  SearchBar,
+  ImageGallery,
+  LoadMoreBtn,
+  Loader,
+  ErrorMessage,
+  ImageModal,
+} from "./components";
+
+import { getPhotos } from "./services/getPhotosApi";
+import "./styles/reset.css";
+
+type Photo = {
+  id: string;
+  urls: {
+    small: string;
+    regular: string;
+  };
+  alt_description: string;
+};
+
+export type Photos = Photo[];
+
+export type Image = {
+  src: string;
+  alt: string;
+};
 
 function App() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [photos, setPhotos] = useState([]);
+  const [photos, setPhotos] = useState<Photos>([]);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [selectImg, setSelectImg] = useState(null);
+  const [error, setError] = useState("");
+  const [selectImg, setSelectImg] = useState<Image>({
+    src: "",
+    alt: "",
+  });
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   useEffect(() => {
     if (!query.trim()) return;
 
-    const getData = async () => {
+    const getData = async (): Promise<void> => {
       try {
         setIsLoading(true);
         const per_page = 12;
 
         const {
-          data: { results, total },
+          data: { total, results },
         } = await getPhotos(query, page);
 
         if (!total) {
@@ -40,15 +63,16 @@ function App() {
         setPhotos((prev) => [...prev, ...results]);
         setShowLoadMore(page < Math.ceil(total / per_page));
       } catch (error) {
-        setError(error.message);
+        setError((error as Error).message);
       } finally {
         setIsLoading(false);
       }
     };
+
     getData();
   }, [query, page]);
 
-  const onSubmit = (query) => {
+  const onSubmit = (query: string): void => {
     if (!query.trim()) {
       toast.error("Enter your search query", {
         position: "top-right",
@@ -64,17 +88,23 @@ function App() {
     setIsEmpty(false);
   };
 
-  const onLoadMore = () => {
+  const onLoadMore = (e: MouseEvent<HTMLButtonElement>): void => {
     setPage((prev) => prev + 1);
   };
 
-  const onOpenModal = (img) => {
+  const onOpenModal = (
+    img: { src: string; alt: string },
+    e: MouseEvent<HTMLImageElement>
+  ): void => {
     setIsOpenModal(true);
-    setSelectImg(img);
+    setSelectImg({ src: img.src, alt: img.alt });
   };
-  const onCloseModal = () => {
+
+  const onCloseModal = (
+    e: MouseEvent<HTMLDivElement> | KeyboardEvent
+  ): void => {
     setIsOpenModal(false);
-    setSelectImg(null);
+    setSelectImg({ src: "", alt: "" });
   };
 
   return (

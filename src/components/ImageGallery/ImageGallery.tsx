@@ -1,7 +1,19 @@
+import { MouseEvent } from "react";
+
 import { ImageCard } from "../ImageCard/ImageCard";
+
+import { Photos } from "../../App";
 import s from "./ImageGallery.module.css";
 
-export const ImageGallery = ({ photos, onOpenModal }) => {
+type Props = {
+  photos: Photos;
+  onOpenModal: (
+    obj: { src: string; alt: string },
+    e: MouseEvent<HTMLImageElement>
+  ) => void;
+};
+
+export const ImageGallery = ({ photos, onOpenModal }: Props) => {
   return (
     <ul className={s.list}>
       {photos.map((photo) => (

@@ -1,10 +1,18 @@
 import { Field, Form, Formik } from "formik";
+
 import s from "./SearchBar.module.css";
 
 const initialValues = { text: "" };
 
-export const SearchBar = ({ onSubmit }) => {
-  const formSubmit = (value, actions) => {
+type Props = {
+  onSubmit: (text: string) => void;
+};
+
+export const SearchBar = ({ onSubmit }: Props) => {
+  const formSubmit = (
+    value: { text: string },
+    actions: { resetForm: () => void }
+  ) => {
     onSubmit(value.text);
     actions.resetForm();
   };
